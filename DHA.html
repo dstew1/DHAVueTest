@@ -199,156 +199,156 @@
         </div>
 
         <div class="dashboard" :class="{ active: !showIntro && view === 'main' }">
-            <h3>How Much I Believe In Drive Hockey Analytics</h3>
+            <h3>How Much I Want the Drive Hockey Analytics Job</h3>
             <canvas id="desireChart" width="400" height="300"></canvas>
             <div>
                 <button class="cta-button" @click="sayHi">Let’s Build the Future of Hockey</button>
             </div>
         </div>
 
-        <div class="analytics" :class="{ active: view === 'analytics' }">
-            <h2 style="margin-bottom: 10px;">Player Analytics Dashboard</h2>
+        <button class="toggle-button" @click="toggleView">Toggle View</button>
+
+        <div class="analytics" :class="{ active: view === 'analytics' }" style="width: 90%; max-width: 900px; margin: 5px auto; max-height: calc(100vh - 120px); overflow-y: auto; padding: 20px; background-color: rgba(255, 255, 255, 0.95); border-radius: 15px; box-sizing: border-box;">
+            <h2 style="margin-bottom: 10px; text-align: center;">Player Analytics Dashboard</h2>
 
             <!-- Player Profile Card -->
-            <div class="player-profile" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+            <div class="player-profile" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
                 <img class="player-photo" src="favicon.png" alt="Daniel Stewart" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dha-accent);">
-                <div class="player-info">
-                    <h3 style="margin: 0;">#1 - Daniel Stewart</h3>
-                    <p style="margin: 2px 0;">Team: Hopefully Drive Hockey</p>
-                    <p style="margin: 2px 0;">Last Season Record: Lost 36 Games in a Row</p>
+                <div class="player-info" style="text-align: center; flex: 1; min-width: 200px;">
+                <h3 style="margin: 0;">#1 - Daniel Stewart</h3>
+                <p style="margin: 2px 0;">Team: Hopefully Drive Hockey</p>
+                <p style="margin: 2px 0;">Last Season Record: Lost 36 Games in a Row</p>
                 </div>
             </div>
-        
+
             <!-- Analytics Charts in Grid -->
             <div class="chart-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                 <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
-                    <h4>Top Speed</h4>
-                    <canvas id="speedChart" width="300" height="200"></canvas>
+                <h4>Top Speed</h4>
+                <canvas id="speedChart" width="300" height="200"></canvas>
                 </div>
                 <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
-                    <h4>Acceleration</h4>
-                    <canvas id="accelChart" width="300" height="200"></canvas>
+                <h4>Acceleration</h4>
+                <canvas id="accelChart" width="300" height="200"></canvas>
                 </div>
                 <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
-                    <h4>Shot Accuracy</h4>
-                    <canvas id="accuracyChart" width="300" height="200"></canvas>
+                <h4>Shot Accuracy</h4>
+                <canvas id="accuracyChart" width="300" height="200"></canvas>
                 </div>
                 <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
-                    <h4>Ice Time</h4>
-                    <canvas id="iceTimeChart" width="300" height="200"></canvas>
+                <h4>Ice Time</h4>
+                <canvas id="iceTimeChart" width="300" height="200"></canvas>
                 </div>
             </div>
-        
         </div>
 
-        <button class="toggle-button" @click="toggleView">Toggle View</button>
+    <script>
+        const { createApp, onMounted, ref } = Vue;
 
-        <script>
-            const { createApp, onMounted, ref } = Vue;
-        
-            createApp({
-                setup() {
-                    const showIntro = ref(true);
-                    const view = ref('main');
-            
-                    const sayHi = () => {
-                        alert("Thanks for checking out my dashboard! Let's make magic happen.");
-                    };
-        
-                    const toggleView = () => {
-                    view.value = view.value === 'main' ? 'analytics' : 'main';
-                    };
-            
-                    onMounted(() => {
-                    setTimeout(() => {
-                        showIntro.value = false;
-            
-                        new Chart(document.getElementById('desireChart').getContext('2d'), {
-                            type: 'pie',
-                            data: {
-                            labels: ['Absolutely', "I'm just being polite"],
-                            datasets: [{
-                                data: [99.9, 0.1],
-                                backgroundColor: ['#0c1021', '#36A2EB']
-                            }]
-                            },
-                            options: {
-                            responsive: true,
-                            animation: {
-                                animateScale: true,
-                                animateRotate: true,
-                                duration: 100,
-                                easing: 'easeOutBounce'
-                            },
-                            plugins: {
-                                tooltip: {
-                                callbacks: {
-                                    label: (context) => `${context.label}: ${context.raw}%`
-                                }
-                                },
-                                legend: { position: 'bottom' }
-                            }
-                            }
-                        });
-            
-                        new Chart(document.getElementById('speedChart').getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: ['Game 1', 'Game 2', 'Game 3'],
-                            datasets: [{
-                            label: 'Speed (km/h)',
-                            data: [28.7, 30.1, 29.6],
-                            backgroundColor: '#0c1021'
-                            }]
+        createApp({
+            setup() {
+            const showIntro = ref(true);
+            const view = ref('main');
+
+            const sayHi = () => {
+                alert("Thanks for checking out my dashboard! Let's make magic happen.");
+            };
+
+            const toggleView = () => {
+                view.value = view.value === 'main' ? 'analytics' : 'main';
+            };
+
+            onMounted(() => {
+                setTimeout(() => {
+                showIntro.value = false;
+
+                new Chart(document.getElementById('desireChart').getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                    labels: ['Absolutely', "I'm just being polite"],
+                    datasets: [{
+                        data: [99.9, 0.1],
+                        backgroundColor: ['#0c1021', '#36A2EB']
+                    }]
+                    },
+                    options: {
+                    responsive: true,
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 100,
+                        easing: 'easeOutBounce'
+                    },
+                    plugins: {
+                        tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.label}: ${context.raw}%`
+                        }
                         },
-                        options: { responsive: true }
-                        });
-            
-                        new Chart(document.getElementById('accelChart').getContext('2d'), {
-                        type: 'line',
-                        data: {
-                            labels: ['1st Period', '2nd Period', '3rd Period'],
-                            datasets: [{
-                            label: 'Acceleration (m/s²)',
-                            data: [2.5, 2.8, 2.6],
-                            borderColor: '#36A2EB',
-                            fill: false
-                            }]
-                        },
-                        options: { responsive: true }
-                        });
-            
-                        new Chart(document.getElementById('accuracyChart').getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Hits', 'Misses'],
-                            datasets: [{
-                            data: [14, 6],
-                            backgroundColor: ['#0c1021', '#36A2EB']
-                            }]
-                        },
-                        options: { responsive: true }
-                        });
-            
-                        new Chart(document.getElementById('iceTimeChart').getContext('2d'), {
-                        type: 'radar',
-                        data: {
-                            labels: ['Game 1', 'Game 2', 'Game 3'],
-                            datasets: [{
-                            label: 'Ice Time (min)',
-                            data: [18, 20, 19],
-                            backgroundColor: 'rgba(12, 16, 33, 0.5)',
-                            borderColor: '#0c1021'
-                            }]
-                        },
-                        options: { responsive: true }
-                        });
-                    }, 4000);
-                    });
-            
-                    return { showIntro, sayHi, toggleView, view };
-                }
-            }).mount('#app');
-        </script>
+                        legend: { position: 'bottom' }
+                    }
+                    }
+                });
+
+                new Chart(document.getElementById('speedChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                    labels: ['Game 1', 'Game 2', 'Game 3'],
+                    datasets: [{
+                        label: 'Speed (km/h)',
+                        data: [28.7, 30.1, 29.6],
+                        backgroundColor: '#0c1021'
+                    }]
+                    },
+                    options: { responsive: true }
+                });
+
+                new Chart(document.getElementById('accelChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                    labels: ['1st Period', '2nd Period', '3rd Period'],
+                    datasets: [{
+                        label: 'Acceleration (m/s²)',
+                        data: [2.5, 2.8, 2.6],
+                        borderColor: '#36A2EB',
+                        fill: false
+                    }]
+                    },
+                    options: { responsive: true }
+                });
+
+                new Chart(document.getElementById('accuracyChart').getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                    labels: ['Hits', 'Misses'],
+                    datasets: [{
+                        data: [14, 6],
+                        backgroundColor: ['#0c1021', '#36A2EB']
+                    }]
+                    },
+                    options: { responsive: true }
+                });
+
+                new Chart(document.getElementById('iceTimeChart').getContext('2d'), {
+                    type: 'radar',
+                    data: {
+                    labels: ['Game 1', 'Game 2', 'Game 3'],
+                    datasets: [{
+                        label: 'Ice Time (min)',
+                        data: [18, 20, 19],
+                        backgroundColor: 'rgba(12, 16, 33, 0.5)',
+                        borderColor: '#0c1021'
+                    }]
+                    },
+                    options: { responsive: true }
+                });
+                }, 4000);
+            });
+
+            return { showIntro, sayHi, toggleView, view };
+            }
+        }).mount('#app');
+    </script>
+
 </body>
 </html>
