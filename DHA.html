@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive Hockey Vue Practice</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dha-navy: #0c1021;
+            --dha-white: #ffffff;
+            --dha-accent: #36A2EB;
+            --dha-alt: #d9e3f0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            background-color: transparent;
+            color: var(--dha-white);
+        }
+
+        #app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        video.bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+
+        .intro {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            animation: fadeOut 2s ease-in-out forwards;
+            animation-delay: 4s;
+            color: var(--dha-navy);
+        }
+
+        .intro img {
+            width: 120px;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        .intro h2 {
+            font-size: 1.4rem;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .dashboard, .analytics {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--dha-white);
+            color: var(--dha-navy);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .dashboard.active, .analytics.active {
+            display: block;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .cta-button {
+            margin-top: 20px;
+            background: var(--dha-accent);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .cta-button:hover {
+            background: #2b8dc6;
+        }
+
+        .toggle-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: var(--dha-white);
+            color: var(--dha-navy);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .dashboard, .analytics {
+                width: 90%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <video class="bg-video" autoplay muted loop playsinline>
+            <source src="hockeyfootage.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="overlay"></div>
+
+        <div class="intro" v-if="showIntro">
+            <img src="drivehockey_logo.jpg" alt="Drive Hockey Logo">
+            <h2>Welcome to My Job Application Dashboard</h2>
+        </div>
+
+        <div class="dashboard" :class="{ active: !showIntro && view === 'main' }">
+            <h3>How Much I Want the Drive Hockey Analytics Job</h3>
+            <canvas id="desireChart" width="400" height="300"></canvas>
+            <div>
+                <button class="cta-button" @click="sayHi">Let’s Build the Future of Hockey</button>
+            </div>
+        </div>
+
+        <div class="analytics" :class="{ active: view === 'analytics' }">
+            <h2 style="margin-bottom: 10px;">Player Analytics Dashboard</h2>
+
+            <!-- Player Profile Card -->
+            <div class="player-profile" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                <img class="player-photo" src="favicon.png" alt="Daniel Stewart" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dha-accent);">
+                <div class="player-info">
+                    <h3 style="margin: 0;">#1 - Daniel Stewart</h3>
+                    <p style="margin: 2px 0;">Team: Hopefully Drive Hockey</p>
+                    <p style="margin: 2px 0;">Last Season Record: Lost 36 Games in a Row</p>
+                </div>
+            </div>
+        
+            <!-- Analytics Charts in Grid -->
+            <div class="chart-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
+                    <h4>Top Speed</h4>
+                    <canvas id="speedChart" width="300" height="200"></canvas>
+                </div>
+                <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
+                    <h4>Acceleration</h4>
+                    <canvas id="accelChart" width="300" height="200"></canvas>
+                </div>
+                <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
+                    <h4>Shot Accuracy</h4>
+                    <canvas id="accuracyChart" width="300" height="200"></canvas>
+                </div>
+                <div class="chart-box" style="background: var(--dha-alt); padding: 15px; border-radius: 10px;">
+                    <h4>Ice Time</h4>
+                    <canvas id="iceTimeChart" width="300" height="200"></canvas>
+                </div>
+            </div>
+        
+        </div>
+
+        <button class="toggle-button" @click="toggleView">Toggle View</button>
+
+        <script>
+            const { createApp, onMounted, ref } = Vue;
+        
+            createApp({
+                setup() {
+                    const showIntro = ref(true);
+                    const view = ref('main');
+            
+                    const sayHi = () => {
+                        alert("Thanks for checking out my dashboard! Let's make magic happen.");
+                    };
+        
+                    const toggleView = () => {
+                    view.value = view.value === 'main' ? 'analytics' : 'main';
+                    };
+            
+                    onMounted(() => {
+                    setTimeout(() => {
+                        showIntro.value = false;
+            
+                        new Chart(document.getElementById('desireChart').getContext('2d'), {
+                            type: 'pie',
+                            data: {
+                            labels: ['Absolutely', "I'm just being polite"],
+                            datasets: [{
+                                data: [99.9, 0.1],
+                                backgroundColor: ['#0c1021', '#36A2EB']
+                            }]
+                            },
+                            options: {
+                            responsive: true,
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true,
+                                duration: 100,
+                                easing: 'easeOutBounce'
+                            },
+                            plugins: {
+                                tooltip: {
+                                callbacks: {
+                                    label: (context) => `${context.label}: ${context.raw}%`
+                                }
+                                },
+                                legend: { position: 'bottom' }
+                            }
+                            }
+                        });
+            
+                        new Chart(document.getElementById('speedChart').getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Game 1', 'Game 2', 'Game 3'],
+                            datasets: [{
+                            label: 'Speed (km/h)',
+                            data: [28.7, 30.1, 29.6],
+                            backgroundColor: '#0c1021'
+                            }]
+                        },
+                        options: { responsive: true }
+                        });
+            
+                        new Chart(document.getElementById('accelChart').getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: ['1st Period', '2nd Period', '3rd Period'],
+                            datasets: [{
+                            label: 'Acceleration (m/s²)',
+                            data: [2.5, 2.8, 2.6],
+                            borderColor: '#36A2EB',
+                            fill: false
+                            }]
+                        },
+                        options: { responsive: true }
+                        });
+            
+                        new Chart(document.getElementById('accuracyChart').getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Hits', 'Misses'],
+                            datasets: [{
+                            data: [14, 6],
+                            backgroundColor: ['#0c1021', '#36A2EB']
+                            }]
+                        },
+                        options: { responsive: true }
+                        });
+            
+                        new Chart(document.getElementById('iceTimeChart').getContext('2d'), {
+                        type: 'radar',
+                        data: {
+                            labels: ['Game 1', 'Game 2', 'Game 3'],
+                            datasets: [{
+                            label: 'Ice Time (min)',
+                            data: [18, 20, 19],
+                            backgroundColor: 'rgba(12, 16, 33, 0.5)',
+                            borderColor: '#0c1021'
+                            }]
+                        },
+                        options: { responsive: true }
+                        });
+                    }, 4000);
+                    });
+            
+                    return { showIntro, sayHi, toggleView, view };
+                }
+            }).mount('#app');
+        </script>
+</body>
+</html>
